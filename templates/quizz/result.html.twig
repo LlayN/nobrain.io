@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Hello QuizzController!
+{% endblock %}
+
+{% block body %}
+	<div class="container my-5">
+		{% if score is defined %}
+			<h4>
+				Vous avez un score de {{ score }}/{{
+					app.request.session.get('choices')|length
+				}} !
+			</h4>
+
+			<a href="{{ path('app_home') }}">
+				<button class="btn btn-success">Retour à l'accueil</button>
+			</a>
+		{% endif %}
+	</div>
+{% endblock %}

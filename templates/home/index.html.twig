@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Accueil
+{% endblock %}
+
+{% block body %}
+	{% if app.user %}
+		<div class="container my-5">
+			<div class="mb-3">
+				<h1>
+					Bienvenue {{ app.user.name }}
+				</h1>
+			</div>
+			<div class="mb-3">
+				<h3>
+					Démarrer un quizz :
+				</h3>
+			</div>
+			<form action="{{ path('app_quizz') }}"
+				class="d-flex flex-column gap-4 p-3 bg-light rounded-3"
+				method="post">
+				<div class="d-flex flex-column gap-2">
+					<h5>
+						Choisissez une catégorie :
+					</h5>
+					<select class="form-select"
+						aria-label="Sélectionner une catégorie"
+						name="category">
+						<option value="tv_cinema">
+							TV & Cinéma
+						</option>
+						<option value="art_litterature">
+							Art & littérature
+						</option>
+						<option value="musique">
+							Musique
+						</option>
+						<option value="sport">
+							Sport
+						</option>
+						<option value="actualite_politique">
+							Actualité & politique
+						</option>
+						<option value="culture_generale">
+							Culture générale
+						</option>
+					</select>
+				</div>
+				<div class="d-flex flex-column gap-2">
+					<h5>
+						Niveau de difficulté :
+					</h5>
+					<div class="form-check">
+						<input class="form-check-input"
+							type="radio"
+							name="difficulty"
+							id="radios1"
+							value="facile"
+							checked />
+						<label class="form-check-label" for="radios1">Facile</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input"
+							type="radio"
+							name="difficulty"
+							id="radios2"
+							value="normal" />
+						<label class="form-check-label" for="radios2">Normal</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input"
+							type="radio"
+							name="difficulty"
+							id="radios3"
+							value="difficile" />
+						<label class="form-check-label" for="radios3">Difficile</label>
+					</div>
+				</div>
+
+				<a href="">
+					<button class="btn btn-success" type="submit">
+						Commencer le quizz
+					</button>
+				</a>
+			</form>
+		</div>
+		<div class="container my-5">
+			<div class="d-flex flex-column gap-4 p-3 bg-light rounded-3">
+				<div class="d-flex flex-column gap-2">
+					<h5>
+						Vos résultats :
+					</h5>
+					{% if stats is empty %}
+						Aucune données existante.
+					{% else %}
+						{% for stat in stats %}
+							<div class="d-flex justify-content-between bg-light-subtle p-3">
+								<h6>
+									Quizz joués : {{ stat.name }}
+								</h6>
+								<h6>
+									Score : {{ stat.score }} / {{ stat.answers }}
+								</h6>
+							</div>
+						{% endfor %}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	{% else %}
+		<div class="container">
+			<h1>
+				Merci de vous connecter pour jouer
+			</h1>
+			<a href="{{ path('app_login') }}">Se connecter</a>
+		</div>
+	{% endif %}
+{% endblock %}

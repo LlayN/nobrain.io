@@ -1,25 +1,65 @@
+# Défini la version de Docker Compose
+version: "3.9"
 
+# Définition des services
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
+  # Build de PHP et Apache grâce à un Dockerfile
+  app:
+    build:
+      context: . # Chemin du Dockerfile
+      dockerfile: Dockerfile # Nom du Dockerfile
+    container_name: php_app # Nom du container
+    working_dir: /var/www/html # Répertoire de travail
+    ports: # Ports exposés
+      - "8080:80"
+    volumes: # Volumes montés
+      - app:/var/www/html
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
-    healthcheck:
-      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-app}"]
-      timeout: 5s
-      retries: 5
-      start_period: 60s
-    volumes:
-      - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+      - DATABASE_URL=mysql://root:@mysql:3306/nobrain
+    depends_on: # Dépendances
+      - composer
+      - npm
+      - mongo
+      - mysql
 
-volumes:
-###> doctrine/doctrine-bundle ###
-  database_data:
-###< doctrine/doctrine-bundle ###
+  composer: # Service Composer
+    image: composer:latest # Image Composer
+    container_name: composer # Nom du container
+    working_dir: /var/www/html # Répertoire de travail
+    command: composer install --no-scripts --no-interaction --optimize-autoloader # Commande Composer
+
+  npm: # Service NPM
+    image: node:latest # Image Node
+    container_name: npm # Nom du container
+    working_dir: /var/www/html # Répertoire de travail
+    command: npm install --no-scripts --no-interaction # Commande NPM.
+
+  mongo: # Service MongoDB
+    image: mongo:latest # Image MongoDB
+    restart: always
+    container_name: mongo # Nom du container
+    ports: # Ports exposés
+      - "27017:27017"
+    volumes: # Volumes montés
+      - mongo_data:/data/db
+
+  mysql:
+    image: mysql:latest
+    restart: always
+    container_name: localhost
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./nobrain.sql:/docker-entrypoint-initdb.d/nobrain.sql
+    environment:
+      MYSQL_DATABASE: "nobrain"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+
+# Définition des volumes
+volumes: # Volumes
+  app:
+  composer:
+  npm:
+  mongo_data:
+  mysql_data:

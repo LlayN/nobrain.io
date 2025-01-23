@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}S'inscrire{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>S'inscrire</h1>
+        {{ form_errors(registrationForm) }}
+
+        {{ form_start(registrationForm) }}
+            {{ form_row(registrationForm.surname) }}
+            {{ form_row(registrationForm.name) }}
+            {{ form_row(registrationForm.age) }}
+            {{ form_row(registrationForm.email) }}
+            {{ form_row(registrationForm.plainPassword) }}
+            <div class="d-flex gap-3 align-items-center mb-3">
+                <button type="submit" class="btn btn-success">S'inscrire</button>
+                <a href="{{ path("app_login") }}">
+                    <button class="btn btn-secondary" type="button">
+                        Se connecter
+                    </button>
+                </a>
+            </div>
+            <a href="{{ path("app_home") }}" class="text-secondary ">Retour à l'accueil</a>
+        {{ form_end(registrationForm) }}
+    </div>
+{% endblock %}

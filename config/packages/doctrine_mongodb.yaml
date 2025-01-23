@@ -1,0 +1,16 @@
+# config/packages/doctrine_mongodb.yaml
+doctrine_mongodb:
+  connections:
+    default:
+      server: mongodb://localhost:27017
+      options: {}
+  default_database: hello_%kernel.environment%
+  document_managers:
+    default:
+      mappings:
+        App:
+          is_bundle: false
+          dir: "%kernel.project_dir%/src/Document"
+          prefix: 'App\Document'
+          alias: App
+      metadata_cache_driver: array # array, service, apcu, memcached, redis
